@@ -24,7 +24,7 @@ def authenticate
   if File.exist? AUTH_TOKEN_FILE
     auth_token = File.open(AUTH_TOKEN_FILE).gets
     auth = flickr.auth.checkToken :auth_token => auth_token
-  else # get an auth_token from Flickr    
+  else # get an auth_token from Flickr
     frob = flickr.auth.getFrob
     auth_url = FlickRaw.auth_url :frob => frob, :perms => 'read'
     puts "Open this url in your browser to complete the authentication process : #{auth_url}"
@@ -42,13 +42,13 @@ def authenticate
 end
 
 def download_photo (photo_filename,photo_specs)
-  
+
   # Returns true if new file created else false
-  # Expects photo_filename to be a string representation 
-  # of the path of the file.  
+  # Expects photo_filename to be a string representation
+  # of the path of the file.
   # Expects json specification of the photo in photo_specs.
-  # Reuses a code snippet from DZone Snippets   
-  unless File.exists?(photo_filename) 
+  # Reuses a code snippet from DZone Snippets
+  unless File.exists?(photo_filename)
     begin
       url = URI.parse(FlickRaw.url_s(photo_specs))
       Net::HTTP.start(url.host) do |http|
@@ -64,42 +64,42 @@ def download_photo (photo_filename,photo_specs)
   rescue Exception => msg
     # display system generated message
     puts msg
-end  
+end
 
 def notify (title='', message='', icon_filename =".images/Flickr-logo.jpg", sticky = false)
-  # Tuck the growl notifications here - if we need to change the notification 
+  # Tuck the growl notifications here - if we need to change the notification
   # mechanism then this method can be overloaded or modified to suit
   # puts "In notify with icon_filename #{icon_filename}"
   `growlnotify #{(sticky)? '-s':''} --image #{icon_filename} -m "#{message}" "#{title}"`
 end
 
 def get_recent_activity (timeframe)
-  # Expects timeframe - a string specifying the period over which to retrieve activity 
-  
-  unless defined? @displayed_comments 
-    @displayed_comments=[]  # ids for comments that have been displayed 
-  end 
+  # Expects timeframe - a string specifying the period over which to retrieve activity
+
+  unless defined? @displayed_comments
+    @displayed_comments=[]  # ids for comments that have been displayed
+  end
   recent_activity = flickr.activity.userPhotos(:timeframe => timeframe)
-  
+
   if recent_activity.to_a.length == 0 then
     # don't display anything, nothing to do
     return
   else
-    recent_activity.each do |x|  
+    recent_activity.each do |x|
       message = ''
       title = x.title
       photo_id = x.id
       photo_filename = ".images/#{photo_id}.jpg"
-      download_photo(photo_filename,x)            
-      x.activity.event.each do |z| 
-        case 
+      download_photo(photo_filename,x)
+      x.activity.event.each do |z|
+        case
         when z.type == "comment" then
         begin
             unless @displayed_comments.include? z.commentid
               @displayed_comments.push z.commentid
               message << "Comment: " << z._content << "\n"
             end
-        end   
+        end
         when z.type == "fave" then
           message << "Added as a favorite\n"
         end
@@ -109,7 +109,7 @@ def get_recent_activity (timeframe)
           message << time_added.to_s << "\n"
         end
       end
-      unless (message == '') 
+      unless (message == '')
         notify(title, message, photo_filename,true)
       end
     end
@@ -128,8 +128,8 @@ def get_stats(date)
       if (x.stats.comments > 0)
         message << "\t: " << "commented on " << x.stats.comments.to_s << " times\n"
       end
-      if (x.stats.favorites > 0) 
-        message << "\t: " << "marked as a favourite " << x.stats.favorites.to_s << " times\n" 
+      if (x.stats.favorites > 0)
+        message << "\t: " << "marked as a favourite " << x.stats.favorites.to_s << " times\n"
       end
       message << "\t: " << "viewed " << x.stats.views.to_s << " times\n"
     end
@@ -142,7 +142,7 @@ end
 begin
   timeframe = '1d'  # Pick up today's (GMT) activity
   sleep_period = 15 # Recommend not making this smaller than 15
-  # Flickr requests that the recent_activity method not be called more 
+  # Flickr requests that the recent_activity method not be called more
   # than once an hour so any more than 4 times in an hour will be very cheeky!
   # Report on view counts once every hour (within the first quarter)
   authenticate
@@ -153,8 +153,12 @@ begin
       # convert to GMT and format as a "YYYY-MM-DD" string
       get_stats(t.getgm.strftime("%Y-%m-%d"))
     end
-    sleep (60*sleep_period) 
+    sleep (60*sleep_period)
   end
+  rescue
+    puts "Oops, something went wrong with flickr-notifier."
+    puts "Is Growl running? (Check system preferences)"
+    puts "Did your internet connection drop out?"
 end
 
 
