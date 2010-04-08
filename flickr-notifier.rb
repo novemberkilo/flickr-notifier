@@ -189,11 +189,11 @@ begin
     get_recent_activity(timeframe)
     $LOG.add(Logger::DEBUG){"Returned from call to get_recent_activity"}
     t = Time.now
-    # if t.min < 15   # we are in the first quarter of a new hour
+    if t.min < 15   # we are in the first quarter of a new hour
       # convert to GMT and format as a "YYYY-MM-DD" string
       get_stats(t.getgm.strftime("%Y-%m-%d"))
       $LOG.add(Logger::DEBUG){"Returned from call to get_stats"}
-    # end
+    end
     $LOG.add(Logger::DEBUG){"About to go to sleep"}
     sleep (60*sleep_period)
     $LOG.add(Logger::DEBUG){"Just woke up"}
