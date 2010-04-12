@@ -138,7 +138,7 @@ def get_stats(date)
   title = "Flickr stream views for today"
   all_quiet_message = "All quiet at your photostream"
   todays_stats = flickr.stats.getTotalViews(:date => date)
-  if todays_stats.photos.views == "0" then
+  if todays_stats.photos.views == 0 then
     $LOG.add(Logger::DEBUG){"Called flickr.stats - no stats to report"}
     notify(title, all_quiet_message, ".images/Flickr-logo.jpg",true)
   else
