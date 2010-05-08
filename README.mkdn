@@ -1,11 +1,11 @@
 # flickr-notifier
 
-flickr-notifier is a simple ruby program that notifies a user of activity on their flickr photostream.  
+flickr-notifier is a simple ruby program that notifies a user of activity on their flickr photostream.  Obviously, this is useless to the individual without a flickr account.
 
 ## What it does
 
    * Polls the user's flickr photostream every 15 minutes to check for new comments or 'favourited' photos and reports on these
-   * Provides an hourly update of the day's photostream stats: views, comments and favorites
+   * Provides an hourly update of the day's photostream stats: views, comments and favorites. Displays summary of activity on top 5 popular photos
 
 ## Dependencies
 
@@ -23,7 +23,13 @@ flickr-notifier is a simple ruby program that notifies a user of activity on the
 
      `gem install flickraw`
 
-   * Download `flickr-notifier.rb` from this repository and save it in a directory to which your account has full permissions (for the creation of temporary files and image directories)
+   * Download `flickr-notifier.rb` from this repository and save it in a directory to which your account has full permissions (for the creation of temporary files and image directories).  Open `flickr-notifier.rb` in your favourite text editor (you will need to enter in your own flickr API key - see the next instruction).
+
+   * Log in to flickr and get your own flickr API key by following the instructions at http://www.flickr.com/services/api/misc.api_keys.html Replace the string `YOUR FLICKR API KEY HERE` with your API key.  Make sure that you keep the double quotes so that the end result looks something like
+   
+   `"api key" => "38d132...17b656e"`
+   
+   Repeat with `YOUR FLICKR SHARED SECRET HERE` to replace this with the secret accompanying your API key.
 
 ### Deployment
 
