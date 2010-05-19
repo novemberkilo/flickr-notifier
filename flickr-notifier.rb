@@ -139,17 +139,23 @@ def get_recent_activity (timeframe)
     $LOG.add(Logger::DEBUG){"Called flickr.activity - recent activity detected"}
     recent_activity.each do |x|
       message = ''
+      photo_id = x.id
       x.activity.event.each do |z|
         case
         when z.type == "comment" then
-        begin
+          begin
             unless @displayed_comments.include? z.commentid
               @displayed_comments.push z.commentid 
               message << "Comment: " << z._content << "\n"
             end
-        end
+          end
         when z.type == "fave" then
-          message << "Added as a favorite\n"
+          begin
+            unless @displayed_comments.include? [photo_id, z.user]
+              @displayed_comments.push [photo_id, z.user]
+              message << "Added as a favorite\n"
+            end
+          end
         end
         unless (message == '')   # Which can happen if recent_activity is neither a comment nor a fave
           message << "User: " << z.username << "\n"
