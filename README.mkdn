@@ -1,3 +1,5 @@
+**NOTE: This project uses an outdated version of the flickr API. It is here for historical reasons - this was my first Ruby project.**
+
 # flickr-notifier
 
 flickr-notifier is a simple ruby program that notifies a user of activity on their flickr photostream.  Obviously, this is useless to the individual without a flickr account.
